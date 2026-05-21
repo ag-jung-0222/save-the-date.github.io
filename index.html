@@ -28,6 +28,7 @@
             --border-color: #e9e7e2;
             --font-serif: 'Gowun Batang', serif;
             --font-sans: 'Noto Sans KR', sans-serif;
+            --deep-green: #1a4d2e; /* 딥그린 */
         }
 
         * {
@@ -281,9 +282,290 @@
             font-size: 0.9rem;
             z-index: 2000;
         }
+
+        /* 봉투 애니메이션 스타일 */
+        .envelope-overlay {
+            display: flex;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 1;
+            pointer-events: auto;
+            transition: opacity 0.6s ease;
+        }
+
+        .envelope-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .envelope-container {
+            position: relative;
+            width: 300px;
+            height: 250px;
+            perspective: 1000px;
+        }
+
+        /* 봉투 본체 */
+        .envelope {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #2d6a4f 0%, var(--deep-green) 100%);
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transform-style: preserve-3d;
+            animation: envelopeEntry 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes envelopeEntry {
+            from {
+                opacity: 0;
+                transform: scale(0.5) translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        /* 봉투 덮개 */
+        .envelope-flap {
+            position: absolute;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(135deg, #1a4d2e 0%, var(--deep-green) 100%);
+            top: 0;
+            left: 0;
+            border-radius: 8px 8px 0 0;
+            transform-origin: top center;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .envelope.opened .envelope-flap {
+            transform: rotateX(170deg);
+        }
+
+        .envelope-flap::after {
+            content: '▼';
+            color: rgba(255,255,255,0.6);
+            font-size: 2rem;
+            animation: bounceArrow 1s infinite;
+        }
+
+        @keyframes bounceArrow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(8px); }
+        }
+
+        /* 봉투 내용 (편지) */
+        .envelope-letter {
+            position: absolute;
+            width: 95%;
+            height: 95%;
+            top: 2.5%;
+            left: 2.5%;
+            background: white;
+            border-radius: 4px;
+            padding: 30px 20px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+            text-align: center;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            line-height: 1.6;
+            z-index: 1;
+        }
+
+        .envelope-letter p {
+            margin: 8px 0;
+            font-family: var(--font-serif);
+        }
+
+        /* 봉투 열기 버튼 텍스트 */
+        .envelope-text {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: white;
+            font-family: var(--font-serif);
+            z-index: 2;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            letter-spacing: 1px;
+        }
+
+        .envelope.opened .envelope-text {
+            display: none;
+        }
+
+        /* 모바일 최적화: 더 작은 봉투 */
+        @media (max-width: 480px) {
+            .envelope-container {
+                width: 260px;
+                height: 210px;
+            }
+        }
+
+        /* Google Drive 업로드 섹션 스타일 */
+        .drive-upload-section {
+            background-color: #f9f8f5;
+            padding: 30px 24px;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--accent-color);
+            border-radius: 8px;
+            padding: 30px 20px;
+            text-align: center;
+            background-color: #fefdfb;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            border-color: var(--deep-green);
+            background-color: #f5f4f0;
+        }
+
+        .upload-area.dragover {
+            border-color: var(--deep-green);
+            background-color: #efefeb;
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .upload-text {
+            font-size: 0.95rem;
+            color: var(--text-sub);
+            margin-bottom: 8px;
+        }
+
+        .upload-subtext {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .btn-upload {
+            display: inline-block;
+            background-color: var(--deep-green);
+            color: white;
+            padding: 12px 28px;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border: none;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-upload:hover {
+            background-color: #0f3d23;
+        }
+
+        .upload-gallery {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .upload-item {
+            position: relative;
+            aspect-ratio: 1;
+            background-color: #e9e7e2;
+            border-radius: 4px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .upload-item img,
+        .upload-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .upload-item-remove {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        /* 지도 섹션 개선 */
+        .map-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 4px;
+        }
+
+        #map {
+            width: 100%;
+            height: 300px;
+        }
+
+        .map-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 16px;
+        }
     </style>
 </head>
 <body>
+
+<!-- 봉투 애니메이션 오버레이 -->
+<div id="envelopeOverlay" class="envelope-overlay">
+    <div class="envelope-container">
+        <div id="envelope" class="envelope">
+            <div class="envelope-flap"></div>
+            <div class="envelope-letter">
+                <p>🎉</p>
+                <p style="font-weight: 500;">특별한 날에</p>
+                <p>초대합니다</p>
+            </div>
+            <div class="envelope-text">
+                📬 여기를 누르세요
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="wrapper">
 
@@ -349,16 +631,60 @@
         </div>
     </section>
 
+    <!-- 4-1. 하객 이미지/영상 업로드 (Google Drive 연동) -->
+    <section class="drive-upload-section">
+        <h2 class="section-title">🎥 추억 나누기</h2>
+        <p style="font-size: 0.95rem; color: var(--text-sub); margin-bottom: 20px;">
+            축제 현장에서 촬영한 사진과 영상을 업로드해주세요!<br>
+            저희와 함께한 소중한 순간들을 영원히 간직하겠습니다.
+        </p>
+        
+        <!-- 파일 업로드 영역 -->
+        <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+            <div class="upload-icon">📸</div>
+            <div class="upload-text">여기를 클릭하거나 드래그 드롭</div>
+            <div class="upload-subtext">이미지 및 영상 파일 (최대 100MB)</div>
+        </div>
+        
+        <input type="file" id="fileInput" multiple accept="image/*,video/*">
+        
+        <button class="btn-upload" onclick="uploadToGoogleDrive()">Google Drive에 업로드</button>
+        
+        <!-- 업로드된 미리보기 갤러리 -->
+        <div id="uploadGallery" class="upload-gallery"></div>
+        
+        <!-- 프리로더 -->
+        <div id="uploadStatus" style="display: none; margin-top: 16px; padding: 12px; background-color: #f0f0f0; border-radius: 4px; text-align: center; font-size: 0.9rem; color: var(--text-sub);">
+            업로드 중입니다... ⏳
+        </div>
+    </section>
+
     <!-- 5. 지도 + 길찾기 링크 -->
     <section class="location">
         <h2 class="section-title">오시는 길</h2>
-        <!-- 실제 카카오맵/네이버맵 스크립트 API가 들어갈 자리입니다 -->
-        <div class="map-placeholder">
-            지도 API 영역 (Kakao/Naver Map)
+        
+        <!-- 약도 이미지 -->
+        <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=600&auto=format&fit=crop" alt="약도" class="map-image">
+        
+        <!-- 카카오맵 또는 실제 지도 API 영역 (선택사항) -->
+        <!-- <div class="map-container">
+            <div id="map"></div>
+        </div> -->
+        
+        <!-- 신청 주소 정보 -->
+        <div style="background-color: #f5f4f0; padding: 16px; border-radius: 4px; margin-bottom: 16px; text-align: left;">
+            <p style="font-size: 0.9rem; color: var(--text-sub); margin-bottom: 8px;"><strong>📍 주소</strong></p>
+            <p style="font-size: 0.95rem; margin-bottom: 12px;">더 바실리움 웨딩홀 8층<br>서울시 OO구 OO로 123</p>
+            <p style="font-size: 0.85rem; color: #999;">
+                🚇 지하철: OO선 OO역 3번 출구 도보 5분<br>
+                🅿️ 주차: 건물 내부 주차장 이용 가능
+            </p>
         </div>
+        
         <div class="map-buttons">
-            <a href="https://map.kakao.com" target="_blank" class="btn-link">카카오맵 길찾기</a>
-            <a href="https://map.naver.com" target="_blank" class="btn-link">네이버지도 길찾기</a>
+            <a href="https://map.kakao.com" target="_blank" class="btn-link">카카오맵</a>
+            <a href="https://map.naver.com" target="_blank" class="btn-link">네이버지도</a>
+            <a href="https://www.google.com/maps" target="_blank" class="btn-link">Google Maps</a>
         </div>
     </section>
 
@@ -367,7 +693,7 @@
         <h2 class="section-title">마음 전하실 곳</h2>
         
         <div class="account-box">
-            <div class="account-title">신랑측 계좌</div>
+            <div class="account-title">신랑</div>
             <div class="account-row">
                 <span>국민은행 123456-01-123456 (예금주: 신랑)</span>
                 <button class="btn-copy" onclick="copyText('123456-01-123456')">복사</button>
@@ -375,10 +701,42 @@
         </div>
 
         <div class="account-box">
-            <div class="account-title">신부측 계좌</div>
+            <div class="account-title">신랑 부친</div>
+            <div class="account-row">
+                <span>국민은행 111111-01-111111 (예금주: 신랑부친)</span>
+                <button class="btn-copy" onclick="copyText('111111-01-111111')">복사</button>
+            </div>
+        </div>
+
+        <div class="account-box">
+            <div class="account-title">신랑 모친</div>
+            <div class="account-row">
+                <span>국민은행 222222-01-222222 (예금주: 신랑모친)</span>
+                <button class="btn-copy" onclick="copyText('222222-01-222222')">복사</button>
+            </div>
+        </div>
+
+        <div class="account-box">
+            <div class="account-title">신부</div>
             <div class="account-row">
                 <span>신한은행 987-654-321000 (예금주: 신부)</span>
                 <button class="btn-copy" onclick="copyText('987-654-321000')">복사</button>
+            </div>
+        </div>
+
+        <div class="account-box">
+            <div class="account-title">신부 부친</div>
+            <div class="account-row">
+                <span>신한은행 333-333-333000 (예금주: 신부부친)</span>
+                <button class="btn-copy" onclick="copyText('333-333-333000')">복사</button>
+            </div>
+        </div>
+
+        <div class="account-box">
+            <div class="account-title">신부 모친</div>
+            <div class="account-row">
+                <span>신한은행 444-444-444000 (예금주: 신부모친)</span>
+                <button class="btn-copy" onclick="copyText('444-444-444000')">복사</button>
             </div>
         </div>
     </section>
@@ -417,6 +775,32 @@
 <div id="toast" class="toast">계좌번호가 복사되었습니다.</div>
 
 <script>
+    // ========== 봉투 애니메이션 ==========
+    const envelopeOverlay = document.getElementById('envelopeOverlay');
+    const envelope = document.getElementById('envelope');
+
+    // 봉투 클릭 이벤트
+    envelope.addEventListener('click', function() {
+        envelope.classList.add('opened');
+        setTimeout(() => {
+            envelopeOverlay.classList.add('hidden');
+        }, 800);
+    });
+
+    // 오버레이 클릭 시 봉투 닫기 (선택사항)
+    envelopeOverlay.addEventListener('click', function(e) {
+        if (e.target === envelopeOverlay) {
+            envelopeOverlay.classList.add('hidden');
+        }
+    });
+
+    // 페이지 로드 시 봉투 표시 (3초 후 자동 닫기)
+    window.addEventListener('load', function() {
+        setTimeout(() => {
+            // 자동으로 열지 않고 사용자의 인터랙션을 기다림
+        }, 500);
+    });
+
     /* 4. 갤러리 모달 제어 함수 */
     function openModal(imgSrc) {
         document.getElementById('imageModal').style.display = 'flex';
@@ -442,6 +826,122 @@
     /* 8. 카카오톡 공유 기본 알림 설정 (추후 SDK 연동용) */
     function shareKakao() {
         alert('카카오톡 공유 기능은 카카오 개발자 자바스크립트 키(Javascript Key) 연동 후 정상 작동합니다. 현재는 OG 태그 기반 기본 공유가 준비되어 있습니다!');
+    }
+
+    /* ========== Google Drive 업로드 기능 ========== */
+    // Google API 설정 (환경변수로 관리 권장)
+    const CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID'; // 구글 클라우드 콘솔에서 발급받은 Client ID로 대체
+    const API_KEY = 'YOUR_GOOGLE_API_KEY'; // 구글 API Key로 대체
+    const FOLDER_ID = 'YOUR_GOOGLE_DRIVE_FOLDER_ID'; // 업로드할 폴더 ID로 대체
+    
+    let selectedFiles = [];
+
+    // 파일 선택
+    document.getElementById('fileInput').addEventListener('change', function(e) {
+        selectedFiles = Array.from(e.target.files);
+        displayFilePreviews();
+    });
+
+    // 드래그앤드롭
+    const uploadArea = document.getElementById('uploadArea');
+    
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    });
+
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('dragover');
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        selectedFiles = Array.from(e.dataTransfer.files);
+        displayFilePreviews();
+    });
+
+    // 파일 미리보기 표시
+    function displayFilePreviews() {
+        const gallery = document.getElementById('uploadGallery');
+        gallery.innerHTML = '';
+        
+        selectedFiles.forEach((file, index) => {
+            const div = document.createElement('div');
+            div.className = 'upload-item';
+            
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    div.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            } else if (file.type.startsWith('video/')) {
+                const video = document.createElement('video');
+                video.style.width = '100%';
+                video.style.height = '100%';
+                video.style.objectFit = 'cover';
+                const blob = new Blob([file], { type: file.type });
+                video.src = URL.createObjectURL(blob);
+                div.appendChild(video);
+            }
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'upload-item-remove';
+            removeBtn.innerHTML = '×';
+            removeBtn.onclick = () => {
+                selectedFiles.splice(index, 1);
+                displayFilePreviews();
+            };
+            div.appendChild(removeBtn);
+            gallery.appendChild(div);
+        });
+    }
+
+    // Google Drive에 업로드
+    async function uploadToGoogleDrive() {
+        if (selectedFiles.length === 0) {
+            alert('업로드할 파일을 선택해주세요!');
+            return;
+        }
+
+        // 샘플 구현 - 실제 구현은 아래 참고
+        // 1. OAuth 2.0 인증 필요
+        // 2. Google Drive API v3 사용
+        
+        // 임시 구현 - 실제로는 구글 클라우드 설정 필요
+        document.getElementById('uploadStatus').style.display = 'block';
+        
+        try {
+            // 실제 구현 예시 (Google Picker API 사용)
+            // await gapi.client.init({
+            //     'apiKey': API_KEY,
+            //     'clientId': CLIENT_ID,
+            //     'scope': ['https://www.googleapis.com/auth/drive.file']
+            // });
+            
+            // 현재는 사용자에게 구글 드라이브 공유 링크 안내
+            showUploadInfo();
+        } catch (error) {
+            console.error('업로드 실패:', error);
+            alert('업로드 중 오류가 발생했습니다. 콘솔을 확인해주세요.');
+        }
+    }
+
+    // 업로드 정보 안내
+    function showUploadInfo() {
+        setTimeout(() => {
+            document.getElementById('uploadStatus').style.display = 'none';
+            alert(`✅ ${selectedFiles.length}개의 파일이 준비되었습니다!\n\n📝 설정 방법:\n1. Google Cloud Console에서 OAuth 2.0 인증 설정\n2. Google Drive API 활성화\n3. CLIENT_ID, API_KEY, FOLDER_ID를 코드에 입력\n\n현재는 테스트 모드입니다.`);
+        }, 1500);
+    }
+
+    // 모바일 최적화: 터치 인터랙션
+    if (window.matchMedia("(max-width: 480px)").matches) {
+        envelope.style.width = '100%';
+        envelope.style.maxWidth = '260px';
     }
 </script>
 
