@@ -285,144 +285,124 @@
 
         /* 봉투 애니메이션 스타일 */
         .envelope-overlay {
-            display: flex;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            height: 100vh;
+            background: linear-gradient(135deg, #2d6a4f 0%, var(--deep-green) 100%);
+            z-index: 2000;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 2000;
-            opacity: 1;
-            pointer-events: auto;
-            transition: opacity 0.6s ease;
+            transition: transform 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform: translateY(0);
         }
 
         .envelope-overlay.hidden {
-            opacity: 0;
+            transform: translateY(-100vh);
             pointer-events: none;
         }
 
         .envelope-container {
             position: relative;
-            width: 300px;
-            height: 250px;
-            perspective: 1000px;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         /* 봉투 본체 */
         .envelope {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #2d6a4f 0%, var(--deep-green) 100%);
-            border-radius: 8px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            position: relative;
+            width: 90%;
+            max-width: 320px;
+            height: auto;
+            background: white;
+            border-radius: 0;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             cursor: pointer;
             transform-style: preserve-3d;
-            animation: envelopeEntry 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        @keyframes envelopeEntry {
-            from {
-                opacity: 0;
-                transform: scale(0.5) translateY(50px);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
+            padding: 40px 30px;
+            text-align: center;
         }
 
         /* 봉투 덮개 */
         .envelope-flap {
             position: absolute;
             width: 100%;
-            height: 50%;
-            background: linear-gradient(135deg, #1a4d2e 0%, var(--deep-green) 100%);
-            top: 0;
+            height: 100%;
             left: 0;
-            border-radius: 8px 8px 0 0;
+            top: 0;
+            background: linear-gradient(135deg, #2d6a4f 0%, var(--deep-green) 100%);
+            border-radius: 0;
             transform-origin: top center;
             transform-style: preserve-3d;
-            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-direction: column;
+            z-index: 10;
+            padding: 40px 30px;
         }
 
         .envelope.opened .envelope-flap {
-            transform: rotateX(170deg);
+            transform: rotateX(180deg) translateZ(-1px);
+        }
+
+        .envelope-flap::before {
+            content: '📬';
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .envelope-flap-text {
+            color: white;
+            font-family: var(--font-serif);
+            font-size: 1.3rem;
+            font-weight: 500;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            letter-spacing: 1px;
+        }
+
+        .envelope-flap-text .small {
+            font-size: 0.85rem;
+            margin-top: 12px;
+            opacity: 0.8;
+            display: block;
         }
 
         .envelope-flap::after {
             content: '▼';
+            position: absolute;
+            bottom: 16px;
             color: rgba(255,255,255,0.6);
-            font-size: 2rem;
-            animation: bounceArrow 1s infinite;
+            font-size: 1.5rem;
+            animation: bounceArrow 1.5s infinite;
         }
 
         @keyframes bounceArrow {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(8px); }
+            0%, 100% { transform: translateY(0); opacity: 1; }
+            50% { transform: translateY(8px); opacity: 0.6; }
         }
 
         /* 봉투 내용 (편지) */
         .envelope-letter {
-            position: absolute;
-            width: 95%;
-            height: 95%;
-            top: 2.5%;
-            left: 2.5%;
-            background: white;
-            border-radius: 4px;
-            padding: 30px 20px;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
-            text-align: center;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            font-size: 0.9rem;
-            color: var(--text-main);
-            line-height: 1.6;
-            z-index: 1;
+            position: relative;
+            z-index: 0;
         }
 
         .envelope-letter p {
             margin: 8px 0;
             font-family: var(--font-serif);
-        }
-
-        /* 봉투 열기 버튼 텍스트 */
-        .envelope-text {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.1rem;
-            font-weight: 500;
-            color: white;
-            font-family: var(--font-serif);
-            z-index: 2;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            letter-spacing: 1px;
-        }
-
-        .envelope.opened .envelope-text {
-            display: none;
-        }
-
-        /* 모바일 최적화: 더 작은 봉투 */
-        @media (max-width: 480px) {
-            .envelope-container {
-                width: 260px;
-                height: 210px;
-            }
+            font-size: 1rem;
+            color: var(--text-main);
         }
 
         /* Google Drive 업로드 섹션 스타일 */
@@ -554,14 +534,14 @@
 <div id="envelopeOverlay" class="envelope-overlay">
     <div class="envelope-container">
         <div id="envelope" class="envelope">
-            <div class="envelope-flap"></div>
-            <div class="envelope-letter">
-                <p>🎉</p>
-                <p style="font-weight: 500;">특별한 날에</p>
-                <p>초대합니다</p>
+            <div class="envelope-flap">
+                <div class="envelope-flap-text">
+                    우리,<br>결혼합니다
+                    <span class="small">특별한 날에 초대합니다</span>
+                </div>
             </div>
-            <div class="envelope-text">
-                📬 여기를 누르세요
+            <div class="envelope-letter" style="display: none;">
+                <p>💌</p>
             </div>
         </div>
     </div>
@@ -778,27 +758,32 @@
     // ========== 봉투 애니메이션 ==========
     const envelopeOverlay = document.getElementById('envelopeOverlay');
     const envelope = document.getElementById('envelope');
+    const envelopeFlap = document.querySelector('.envelope-flap');
 
-    // 봉투 클릭 이벤트
+    // 봉투 클릭 이벤트 - 봉투가 열리고 위로 올라감
     envelope.addEventListener('click', function() {
         envelope.classList.add('opened');
+        
+        // 봉투가 열리는 중에는 스크롤 불가
+        document.body.style.overflow = 'hidden';
+        
         setTimeout(() => {
+            // 봉투가 완전히 열린 후 위로 올라가면서 페이지 스크롤 활성화
             envelopeOverlay.classList.add('hidden');
+            document.body.style.overflow = 'auto';
         }, 800);
     });
 
-    // 오버레이 클릭 시 봉투 닫기 (선택사항)
+    // 오버레이 클릭 시 봉투 닫기 (아직 열리지 않은 상태에서만)
     envelopeOverlay.addEventListener('click', function(e) {
-        if (e.target === envelopeOverlay) {
-            envelopeOverlay.classList.add('hidden');
+        if (e.target === envelopeOverlay || e.target === envelopeFlap) {
+            envelope.click();
         }
     });
 
-    // 페이지 로드 시 봉투 표시 (3초 후 자동 닫기)
+    // 페이지 로드 시 초기 상태
     window.addEventListener('load', function() {
-        setTimeout(() => {
-            // 자동으로 열지 않고 사용자의 인터랙션을 기다림
-        }, 500);
+        document.body.style.overflow = 'hidden';
     });
 
     /* 4. 갤러리 모달 제어 함수 */
